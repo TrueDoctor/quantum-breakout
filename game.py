@@ -114,6 +114,7 @@ all_sprites_list.add(ball)
 # The loop will carry on until the user exit the game (e.g. clicks the close button).
 carryOn = True
 quantumFlag = False
+frames = 0
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
@@ -143,20 +144,24 @@ while carryOn:
         paddleRightest.moveRight(5, 80)
 
     if keys[pygame.K_SPACE]:
-        quantumFlag = True
-        myArc = Arc(ball.position, ball.velocity, 5)
-        myWavefront = Wavefront(myArc)
+        if not quantumFlag:
+            quantumFlag = True
+            myArc = Arc(ball.position, ball.velocity, 3)
+            myWavefront = Wavefront(myArc)
 
-        dt = pygame.time.Clock().get_time()
+            #dt = pygame.time.Clock().get_time()
 
-        myArc.next(dt)
-        print(myWavefront)
-        print(allEndPoints)
-        myWavefront.next(dt, allEndPoints)
+            #myArc.next(dt)
+            #myWavefront.next(dt, allEndPoints)
 
-        ball.kill()
+            ball.kill()
+        else:
+            #quantumFlag = False
+            pass
+
 
     all_sprites_list.update()
+    frames += 1
 
     #Check if the ball is bouncing against any of the 4 walls:
     if ball.rect.x >= 790:
@@ -244,9 +249,11 @@ while carryOn:
 
     all_sprites_list.draw(screen)
 
-    if quantumFlag:
-        myArc.render(screen)
+    if quantumFlag and (frames % 60) == 0:
+        myWavefront.next(10, allEndPoints)
 
+    if quantumFlag:
+        myWavefront.render(screen)
 
     pygame.display.flip()
     clock.tick(60)
