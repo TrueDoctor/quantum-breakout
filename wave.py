@@ -6,16 +6,10 @@ import colors
 h = 1
 
 
-def angle(vector1, vector2):
-    x1, y1 = vector1
-    x2, y2 = vector2
-    inner_product = x1 * x2 + y1 * y2
-    len1 = math.hypot(x1, y1)
-    len2 = math.hypot(x2, y2)
-    return math.acos(inner_product / (len1 * len2))
-
-
 def drawArc(screen, center, direction, theta):
+    (dx, dy) = direction
+    direction = Vec2(dx, -dy)
+
     (length, myAngle) = direction.as_polar()
     #(dx, dy) = direction
     myAngle = myAngle / 360 * 2 * math.pi
@@ -39,13 +33,15 @@ class Arc:
         drawArc(screen, self.center, self.direction, self.arc_length)
 
     def next(self, dt):
+        (dx, dy) = self.direction
+        direction = Vec2(dx, dy)
         length = self.direction.magnitude()
         new_length = length * self.arc_length + dt
-        center_offset = self.direction.normalize() * -((new_length - dt) - length)
-        new_direction = self.direction * ((new_length) / length)
-        new_center = self.center #- new_direction + self.direction
+        center_offset = direction.normalize() * -((new_length - dt) - length)
+        new_direction = direction * ((new_length) / length)
+        new_center = self.center + (direction - new_direction) + new_direction.normalize() * dt
 
-        new_arc_length = self.arc_length
+        new_arc_length = self.arc_length / ((new_length / length) **0.1)
         new_arc = Arc(new_center, new_direction, new_arc_length)
 
         return new_arc

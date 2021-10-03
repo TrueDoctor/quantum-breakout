@@ -116,6 +116,7 @@ all_sprites_list.add(ball)
 carryOn = True
 quantumFlag = False
 frames = 0
+toggle_frame = 0
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
@@ -144,12 +145,11 @@ while carryOn:
         paddleRight.moveRight(5, 60)
         paddleRightest.moveRight(5, 80)
 
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and frames - toggle_frame > 30:
+        toggle_frame = frames
         if not quantumFlag:
             quantumFlag = True
-            (dx, dy) = ball.velocity
-            directon = Vec2(dx, -dy)
-            myArc = Arc(ball.position, directon, 1.5)
+            myArc = Arc(ball.position, ball.velocity, 1.5)
             myWavefront = Wavefront(myArc)
 
             #dt = pygame.time.Clock().get_time()
@@ -159,8 +159,10 @@ while carryOn:
 
             ball.kill()
         else:
-            #quantumFlag = False
-            pass
+            quantumFlag = False
+            arc = myWavefront.beams[0].arcs[-1]
+            ball.position = arc.center + arc.direction
+            all_sprites_list.add(ball)
 
     all_sprites_list.update()
     frames += 1
@@ -251,7 +253,7 @@ while carryOn:
 
     all_sprites_list.draw(screen)
 
-    if quantumFlag and (frames % 60) == 0:
+    if quantumFlag and (frames % 10) == 0:
         myWavefront.next(10, allEndPoints)
 
     if quantumFlag:
