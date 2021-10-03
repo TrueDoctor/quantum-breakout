@@ -1,6 +1,7 @@
 import pygame
 import math
 from pygame.math import Vector2 as Vec2
+import colors
 
 h = 1
 
@@ -15,14 +16,16 @@ def angle(vector1, vector2):
 
 
 def drawArc(screen, center, direction, theta):
-    (dx, dy) = direction
+    (length, myAngle) = direction.as_polar()
+    #(dx, dy) = direction
+    myAngle = myAngle / 360 * 2 * math.pi
     (cx, cy) = center
-    length = math.sqrt(dx**2 + dy**2)
+    #length = math.sqrt(dx**2 + dy**2)
     rect = [cx - length, cy - length, 2 * length, 2 * length]
 
-    myAngle = math.copysign(angle(direction, (1, 0)), dy)
+    #myAngle = math.copysign(angle(direction, (1, 0)), dy)
 
-    pygame.draw.arc(screen, (255, 255, 255), rect, myAngle - theta / 2,
+    pygame.draw.arc(screen, colors.white, rect, myAngle - theta / 2,
                     myAngle + theta / 2, 2)
 
 
@@ -37,9 +40,10 @@ class Arc:
 
     def next(self, dt):
         length = self.direction.magnitude()
-        new_length = length * self.arc_length
-        new_direction = self.direction * ((new_length + dt) / length)
-        new_center = self.center + self.direction - new_direction
+        new_length = length * self.arc_length + dt
+        center_offset = self.direction.normalize() * -((new_length - dt) - length)
+        new_direction = self.direction * ((new_length) / length)
+        new_center = self.center #- new_direction + self.direction
 
         new_arc_length = self.arc_length
         new_arc = Arc(new_center, new_direction, new_arc_length)

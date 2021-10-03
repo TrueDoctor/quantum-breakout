@@ -4,6 +4,7 @@ import pygame
 import sys
 import math
 from math import pi
+from pygame.math import Vector2 as Vec2
 
 from paddle import Paddle
 from ball import Ball
@@ -146,7 +147,9 @@ while carryOn:
     if keys[pygame.K_SPACE]:
         if not quantumFlag:
             quantumFlag = True
-            myArc = Arc(ball.position, ball.velocity, 3)
+            (dx, dy) = ball.velocity
+            directon = Vec2(dx, -dy)
+            myArc = Arc(ball.position, directon, 1.5)
             myWavefront = Wavefront(myArc)
 
             #dt = pygame.time.Clock().get_time()
