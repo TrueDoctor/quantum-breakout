@@ -150,8 +150,8 @@ while carryOn:
         dt = pygame.time.Clock().get_time()
 
         myArc.next(dt)
-        print(myWavefront)
-        print(allEndPoints)
+        #print(myWavefront)
+        #print(allEndPoints)
         myWavefront.next(dt, allEndPoints)
 
         ball.kill()
