@@ -7,7 +7,7 @@ BLACK = (0, 0, 0)
 class Ball(pygame.sprite.Sprite):
     #This class represents a ball. It derives from the "Sprite" class in Pygame.
 
-    def __init__(self, color, width, height):
+    def __init__(self, color, width, height, initPos, initVel):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
@@ -20,18 +20,12 @@ class Ball(pygame.sprite.Sprite):
         # Draw the ball (a rectangle!)
         pygame.draw.rect(self.image, color, [0, 0, width, height])
 
-        # Fetch the rectangle object that has the dimensions of the image.
-        self.rect = self.image.get_rect()
+        self.position = initPos
+        self.rect = self.image.get_rect(center=self.position)
 
-
-
-        self.position = pygame.Vector2()
-        self.position.xy = self.rect.x + width/2,self.rect.y + height/2
-        self.velocity = pygame.Vector2()
-        self.velocity.xy = 4,4
-
+        self.velocity = initVel
 
 
     def update(self):
-        self.rect.x += self.velocity[0]
-        self.rect.y += self.velocity[1]
+        self.position += self.velocity
+        self.rect.center = self.position

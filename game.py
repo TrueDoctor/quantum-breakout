@@ -12,14 +12,15 @@ from slit import Slit
 from wall import Wall
 from colors import *
 import wave
+from wave import Arc
+from wave import Beam
+from wave import Wavefront
 
 pygame.init()
 
 
 score = 0
 lives = 3
-
-
 
 # Open a new Window
 size = width, height = 800, 600
@@ -51,9 +52,12 @@ paddleRightest.rect.x = 280
 paddleRightest.rect.y = 560
 
 #Create the ball sprite
-ball = Ball(white, 20, 20)
-ball.rect.x = 345
-ball.rect.y = 195
+ball = Ball(white, 20, 20, pygame.Vector2(345, 195), pygame.Vector2(4,4))
+
+brickEndPoints = []
+wallEndPoints = []
+slitEndPoints = []
+allEndPoints = []
 
 all_bricks = pygame.sprite.Group()
 for i in range(7):
@@ -62,18 +66,21 @@ for i in range(7):
     brick.rect.y = 60
     all_sprites_list.add(brick)
     all_bricks.add(brick)
+    brickEndPoints.append([(brick.rect.x, brick.rect.y), (brick.rect.x+brick.myWidth, brick.rect.y)])
 for i in range(7):
     brick = Brick(orange, 80)
     brick.rect.x = 60 + i * 100
     brick.rect.y = 100
     all_sprites_list.add(brick)
     all_bricks.add(brick)
+    brickEndPoints.append([(brick.rect.x, brick.rect.y), (brick.rect.x+brick.myWidth, brick.rect.y)])
 for i in range(7):
     brick = Brick(yellow, 80)
     brick.rect.x = 60 + i * 100
     brick.rect.y = 140
     all_sprites_list.add(brick)
     all_bricks.add(brick)
+    brickEndPoints.append([(brick.rect.x, brick.rect.y), (brick.rect.x+brick.myWidth, brick.rect.y)])
 
 all_slits = pygame.sprite.Group()
 for i in range(3):
@@ -82,6 +89,7 @@ for i in range(3):
     slit.rect.y = 350
     all_sprites_list.add(slit)
     all_slits.add(slit)
+    slitEndPoints.append([(slit.rect.x, slit.rect.y), (slit.rect.x+slit.myWidth, slit.rect.y)])
 
 all_walls = pygame.sprite.Group()
 for i in range(2):
@@ -90,6 +98,9 @@ for i in range(2):
     wall.rect.y = 350
     all_sprites_list.add(wall)
     all_walls.add(wall)
+    wallEndPoints.append([(wall.rect.x, wall.rect.y), (wall.rect.x+wall.myWidth, wall.rect.y)])
+
+allEndPoints = brickEndPoints + slitEndPoints + wallEndPoints
 
 
 # Add the paddle to the list of sprites
@@ -102,6 +113,7 @@ all_sprites_list.add(ball)
 
 # The loop will carry on until the user exit the game (e.g. clicks the close button).
 carryOn = True
+quantumFlag = False
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
@@ -131,6 +143,17 @@ while carryOn:
         paddleRightest.moveRight(5, 80)
 
     if keys[pygame.K_SPACE]:
+        quantumFlag = True
+        myArc = Arc(ball.position, ball.velocity, 5)
+        myWavefront = Wavefront(myArc)
+
+        dt = pygame.time.Clock().get_time()
+
+        myArc.next(dt)
+        print(myWavefront)
+        print(allEndPoints)
+        myWavefront.next(dt, allEndPoints)
+
         ball.kill()
 
     all_sprites_list.update()
@@ -170,7 +193,7 @@ while carryOn:
     if pygame.sprite.collide_mask(ball, paddleCenter):
         ball.rect.x -= ball.velocity[0]
         ball.rect.y -= ball.velocity[1]
-        ball.velocity[1] = -1.1 * ball.velocity[1]
+        ball.velocity[1] = -1.25 * ball.velocity[1]
         ball.velocity[0] = 0
     if pygame.sprite.collide_mask(ball, paddleRight):
         ball.rect.x -= ball.velocity[0]
@@ -210,6 +233,7 @@ while carryOn:
 
     #-------------Drawing code----------
     screen.fill(darkblue)
+
     pygame.draw.line(screen, white, [0, 38], [800, 38], 2)
 
     font = pygame.font.Font(None, 34)
@@ -219,6 +243,10 @@ while carryOn:
     screen.blit(text, (650, 10))
 
     all_sprites_list.draw(screen)
+
+    if quantumFlag:
+        myArc.render(screen)
+
 
     pygame.display.flip()
     clock.tick(60)

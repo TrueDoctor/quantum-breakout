@@ -6,9 +6,13 @@ BLACK = (0, 0, 0)
 class Paddle(pygame.sprite.Sprite):
     #This class represents a paddle. It derives from the "Sprite" class in Pygame.
 
+    myWidth = 0
+
     def __init__(self, color, width, height):
         # Call the parent class (Sprite) constructor
         super().__init__()
+
+        self.myWidth = width
 
         # Pass in the color of the paddle, and its x and y position, width and height.
         # Set the background color and set it to be transparent
