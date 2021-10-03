@@ -152,16 +152,14 @@ while carryOn:
             myArc = Arc(ball.position, ball.velocity, 1.5)
             myWavefront = Wavefront(myArc)
 
-            #dt = pygame.time.Clock().get_time()
-
-            #myArc.next(dt)
-            #myWavefront.next(dt, allEndPoints)
-
             ball.kill()
         else:
             quantumFlag = False
             arc = myWavefront.beams[0].arcs[-1]
+            lenght = ball.velocity.magnitude()
+            arc.random_direction()
             ball.position = arc.center + arc.direction
+            ball.velocity = arc.direction.normalize() * lenght
             all_sprites_list.add(ball)
 
     all_sprites_list.update()
