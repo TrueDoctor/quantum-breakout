@@ -10,49 +10,15 @@ from ball import Ball
 from brick import Brick
 from slit import Slit
 from wall import Wall
+from colors import *
+import wave
 
 pygame.init()
 
-# Define some colors
-white = (255, 255, 255)
-darkblue = (12, 20, 50)
-lightblue = (0, 176, 240)
-paddle1 = (0, 0, 255)
-paddle2 = (175, 0, 255)
-paddle3 = (255, 0, 255)
-paddle4 = (255, 0, 175)
-paddle5 = (255, 0, 0)
-red = (255, 0, 0)
-orange = (255, 100, 0)
-yellow = (255, 255, 0)
-black = (0, 0, 0)
-gray = (128, 118, 111)
 
 score = 0
 lives = 3
 
-
-def angle(vector1, vector2):
-    x1, y1 = vector1
-    x2, y2 = vector2
-    inner_product = x1 * x2 + y1 * y2
-    len1 = math.hypot(x1, y1)
-    len2 = math.hypot(x2, y2)
-    return math.acos(inner_product / (len1 * len2))
-
-
-def drawArc(center, direction, theta):
-    (dx, dy) = direction
-    (cx, cy) = center
-    length = math.sqrt(dx**2 + dy**2)
-    rect = [cx - length, cy - length, 2 * length, 2 * length]
-
-    myAngle = math.copysign(angle(direction, (1, 0)), dy)
-
-    #theta = 0,
-
-    pygame.draw.arc(screen, (255, 255, 255), rect, myAngle - theta / 2,
-                    myAngle + theta / 2, 2)
 
 
 # Open a new Window
