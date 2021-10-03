@@ -3,6 +3,7 @@ import math
 from pygame.math import Vector2 as Vec2
 
 h = 1
+flatten = lambda x: [i for row in x for i in row]
 
 
 def angle(vector1, vector2):
@@ -45,3 +46,31 @@ class Arc:
         new_arc = Arc(new_center, new_direction, new_arc_length)
 
         return new_arc
+
+
+class Beam:
+    def __init__(self, arc):
+        self.arcs = [arc]
+        self.dead = False
+
+    def next(self, dt, lines):
+        if not self.dead:
+            self.arcs.append(self.arcs[-1].next(dt))
+
+    def render(self, screen):
+        for arc in self.arcs:
+            arc.render(screen)
+
+
+class Wavefront:
+    def __init__(self, arc):
+        self.beams = [Beam(arc)]
+
+    def next(self, dt, lines):
+        new_beams = []
+        for beam in self.beams:
+            new_beams.extend(beam.next(dt, flatten(lines)))
+
+    def render(self, screen):
+        for beam in self.beams:
+            beam.render(screen)
