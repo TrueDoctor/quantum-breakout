@@ -3,7 +3,7 @@ import pygame
 BLACK = (0, 0, 0)
 
 
-class Brick(pygame.sprite.Sprite):
+class Slit(pygame.sprite.Sprite):
     #This class represents a brick. It derives from the "Sprite" class in Pygame.
 
     def __init__(self, color, width):

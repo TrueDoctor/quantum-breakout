@@ -8,6 +8,8 @@ from math import pi
 from paddle import Paddle
 from ball import Ball
 from brick import Brick
+from slit import Slit
+from wall import Wall
 
 pygame.init()
 
@@ -24,6 +26,7 @@ red = (255, 0, 0)
 orange = (255, 100, 0)
 yellow = (255, 255, 0)
 black = (0, 0, 0)
+gray = (128, 118, 111)
 
 score = 0
 lives = 3
@@ -82,29 +85,46 @@ paddleRightest.rect.x = 280
 paddleRightest.rect.y = 560
 
 #Create the ball sprite
-ball = Ball(white, 10, 10)
+ball = Ball(white, 20, 20)
 ball.rect.x = 345
 ball.rect.y = 195
 
 all_bricks = pygame.sprite.Group()
 for i in range(7):
-    brick = Brick(red, 80, 30)
+    brick = Brick(red, 80)
     brick.rect.x = 60 + i * 100
     brick.rect.y = 60
     all_sprites_list.add(brick)
     all_bricks.add(brick)
 for i in range(7):
-    brick = Brick(orange, 80, 30)
+    brick = Brick(orange, 80)
     brick.rect.x = 60 + i * 100
     brick.rect.y = 100
     all_sprites_list.add(brick)
     all_bricks.add(brick)
 for i in range(7):
-    brick = Brick(yellow, 80, 30)
+    brick = Brick(yellow, 80)
     brick.rect.x = 60 + i * 100
     brick.rect.y = 140
     all_sprites_list.add(brick)
     all_bricks.add(brick)
+
+all_slits = pygame.sprite.Group()
+for i in range(3):
+    slit = Slit(white, 10)
+    slit.rect.x = 195 + i * 200
+    slit.rect.y = 350
+    all_sprites_list.add(slit)
+    all_slits.add(slit)
+
+all_walls = pygame.sprite.Group()
+for i in range(2):
+    wall = Wall(gray, 190)
+    wall.rect.x = 205 + i * 200
+    wall.rect.y = 350
+    all_sprites_list.add(wall)
+    all_walls.add(wall)
+
 
 # Add the paddle to the list of sprites
 all_sprites_list.add(paddleLeftest)
@@ -143,6 +163,9 @@ while carryOn:
         paddleCenter.moveRight(5, 40)
         paddleRight.moveRight(5, 60)
         paddleRightest.moveRight(5, 80)
+
+    if keys[pygame.K_SPACE]:
+        ball.kill()
 
     all_sprites_list.update()
 
@@ -203,13 +226,21 @@ while carryOn:
         if len(all_bricks) == 0:
             #Display Level Complete Message for 3 seconds
             font = pygame.font.Font(None, 74)
-            text = font.render("LEVEL COMPLETE", 1, WHITE)
+            text = font.render("LEVEL COMPLETE", 1, white)
             screen.blit(text, (200, 300))
             pygame.display.flip()
             pygame.time.wait(3000)
 
             #Stop the Game
             carryOn = False
+
+    wall_collision_list = pygame.sprite.spritecollide(ball, all_walls, False)
+    for wall in wall_collision_list:
+        ball.velocity[1] = -ball.velocity[1]
+
+
+
+
 
     #-------------Drawing code----------
     screen.fill(darkblue)
